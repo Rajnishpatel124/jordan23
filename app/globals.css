@@ -1,0 +1,621 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base resets ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: auto; /* Lenis handles smoothness */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  font-family: var(--font-body), monospace;
+  font-synthesis: none; /* never fake bold/italic — only real loaded faces */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+/* ─── Selection ───────────────────────────────────────────── */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+/* ─── Focus ───────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* ─── Images ──────────────────────────────────────────────── */
+img, video { max-width: 100%; height: auto; display: block; }
+
+/* ─── Section shell (reused across all sections) ─────────── */
+.section-shell {
+  position: relative;
+  min-height: 100svh;
+  padding-left:  var(--section-px);
+  padding-right: var(--section-px);
+  padding-top:   var(--section-py);
+  padding-bottom: var(--section-py);
+  overflow: hidden;
+}
+
+.section-content {
+  position: relative;
+  z-index: var(--z-content);
+  max-width: var(--max-content);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Word / line split containers ───────────────────────── */
+/*
+ * overflow: clip + overflow-clip-margin: the animation mask hides words
+ * traveling from y:110% but the clip margin lets glyph edges (ascenders,
+ * descenders, diagonal strokes) render slightly outside the line box
+ * without being cut off. overflow:hidden would clip at exactly the box
+ * edge, severing W tops, x curves, S bowls at tight line-heights.
+ */
+.word-wrap {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.15em;
+  vertical-align: bottom;
+}
+
+/* ─── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   JORDAN23
+   ══════════════════════════════════════════════════════════ */
+
+/* ─── Persistent overlays ─────────────────────────────────── */
+.grain-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+.scroll-badge {
+  position: fixed;
+  bottom: clamp(1.5rem, 4vw, 3rem);
+  right:  clamp(1.5rem, 4vw, 3rem);
+  width: 92px;
+  height: 92px;
+  z-index: var(--z-badge);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-out);
+}
+.scroll-badge svg { width: 100%; height: 100%; }
+.scroll-badge .badge-ring { transform-origin: 50% 50%; }
+
+/* ─── Loader ──────────────────────────────────────────────── */
+.j-loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--j-arena);
+  transition: opacity 0.6s var(--ease-in);
+}
+.j-loader.is-hidden { opacity: 0; pointer-events: none; }
+
+/* ─── Marquee ─────────────────────────────────────────────── */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border-top: 1px solid var(--j-cream-15);
+  border-bottom: 1px solid var(--j-cream-15);
+  padding: clamp(0.9rem, 2vw, 1.4rem) 0;
+}
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marqueeScroll 38s linear infinite;
+}
+.marquee-item {
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-base);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  padding: 0 1.4rem;
+}
+.marquee-record { color: var(--j-bulls-red); font-weight: 500; }
+.marquee-stat   { color: var(--j-cream); }
+.marquee-sep    { color: var(--j-cream-40); }
+
+/* ─── Hero prose panel ────────────────────────────────────── */
+.hero-23 { pointer-events: none; }
+.hero-23 [data-draw-path] {
+  fill: none;
+  stroke: var(--j-cream);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hero-flash {
+  position: absolute;
+  inset: 0;
+  background: var(--j-cream);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+.hero-prose-panel em {
+  color: var(--j-bulls-red);
+  font-style: italic;
+}
+
+/* ─── Floating Portrait ──────────────────────────────────── */
+/*
+ * .fp          — root; inline-block so it sizes to the image
+ * .fp__stage   — position context for the depth glow
+ * .fp__frame   — aspect-ratio container; overflow:hidden clips the images
+ * .fp__layer   — full-fill absolute, one per image; opacity animated by Motion
+ * .fp__glow    — blurred radial gradient behind the frame (editorial shadow)
+ */
+.fp {
+  display: block;   /* fill the wrapper div so fp__frame width:100% resolves */
+  width: 100%;
+  cursor: crosshair;
+}
+.fp__stage {
+  position: relative;
+}
+.fp__frame {
+  position: relative;
+  width: 100%;
+  /* 626×900 natural ratio of the Jordan cut-out */
+  aspect-ratio: 626 / 900;
+  /* no overflow:hidden — let the transparent cutout breathe freely */
+
+  /* Left-edge fade: the cutout's first opaque pixels (wristband on the
+     extended arm) appear at ~27 % of frame width as isolated bright marks.
+     Gradient mask fades them out; Jordan's main body begins ~27 % in and is
+     fully visible by 34 % — so the fade is unnoticeable on the figure itself. */
+  /* Artifact zone: frame x 159–219 px (21–29 % of 750 px frame).
+     Keeping transparent through 31 % ensures those pixels are fully hidden;
+     fade completes at 38 % (285 px), well before Jordan's torso and ball. */
+  -webkit-mask-image: linear-gradient(to right, transparent 31%, black 38%);
+          mask-image: linear-gradient(to right, transparent 31%, black 38%);
+}
+.fp__layer {
+  position: absolute;
+  inset: 0;
+}
+.fp__glow {
+  position: absolute;
+  /* sits ~20 px below the bottom edge of the frame */
+  bottom: -20px;
+  left: 6%;
+  right: 6%;
+  height: 90px;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(220, 220, 220, 0.13) 0%,
+    transparent 70%
+  );
+  filter: blur(22px);
+  border-radius: 50%;
+  transform: scaleY(0.45);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Eras track ──────────────────────────────────────────── */
+.eras-pin {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+.eras-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+.era-panel {
+  position: relative;
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--section-px);
+  overflow: hidden;
+  /* Shift the entire card composition upward by 4vh for better
+     viewport centering. All internal spacing is preserved. */
+  transform: translateY(-4vh);
+}
+.era-ghost {
+  position: absolute;
+  top: 50%;
+  /* Right-anchor with positive clearance — element box stays inside
+     overflow:hidden boundary, so the glyph is never clipped.
+     clamp(4rem, 5.5vw, 5rem) ≈ 64–80px from the right viewport edge. */
+  right: clamp(4rem, 5.5vw, 5rem);
+  transform: translateY(-50%);
+  font-family: var(--font-heading), serif;
+  font-size: clamp(20rem, 55vw, 52rem);
+  line-height: 1;
+  color: var(--j-cream-08);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+.era-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  width: 100%;
+  max-width: var(--max-content);
+  margin: 0 auto;
+}
+@media (min-width: 900px) {
+  .era-grid { grid-template-columns: 0.85fr 1.15fr; align-items: center; }
+}
+.era-prose em { color: var(--j-bulls-red); font-style: italic; }
+
+.ring-label-red  { color: var(--j-bulls-red); }
+.ring-label-gold { color: var(--j-bulls-gold); }
+
+/* ─── Eras nav ────────────────────────────────────────────── */
+.eras-nav {
+  position: absolute;
+  bottom: clamp(1.2rem, 3vw, 2.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.eras-nav-dot {
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--j-cream-40);
+  transition: color 0.3s var(--ease-out);
+}
+.eras-nav-dot.is-active { color: var(--j-bulls-red); }
+.eras-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--j-cream-08);
+  z-index: 30;
+}
+.eras-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--j-bulls-red);
+  transform-origin: left center;
+}
+
+/* ─── Win/Loss bar ────────────────────────────────────────── */
+.winloss {
+  display: flex;
+  height: 10px;
+  width: 100%;
+  border: 1px solid var(--j-cream-15);
+  overflow: hidden;
+}
+.winloss-wins {
+  height: 100%;
+  background: var(--j-bulls-red);
+}
+.winloss-losses { height: 100%; background: transparent; }
+
+/* ─── Ring row ────────────────────────────────────────────── */
+.ring-row { display: flex; gap: 0.5rem; }
+.ring-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--j-cream-40);
+  box-sizing: border-box;
+}
+.ring-dot.is-filled { background: var(--j-bulls-red); border-color: var(--j-bulls-red); }
+.ring-dot.is-gold   { background: var(--j-bulls-gold); border-color: var(--j-bulls-gold); }
+
+/* ─── Shot chart placeholder ──────────────────────────────── */
+.shotchart-placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--j-cream-15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 22px,
+      var(--j-cream-08) 22px,
+      var(--j-cream-08) 23px
+    );
+}
+.shotchart-placeholder span {
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--j-cream-40);
+}
+
+/* ─── Retirement interstitial ─────────────────────────────── */
+.interstitial-panel {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  background: #050505;
+}
+.interstitial-line {
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--j-cream-55);
+}
+
+/* ─── Type-on cursor ──────────────────────────────────────── */
+.type-cursor {
+  display: inline-block;
+  width: 0.6ch;
+  animation: blink 1s steps(1) infinite;
+  color: var(--j-bulls-red);
+}
+
+/* ─── Voices scatter ──────────────────────────────────────── */
+.voices-pin {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+.voices-headline {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 60ch);
+  text-align: center;
+  z-index: 5;
+}
+.voices-headline em { color: var(--j-bulls-red); font-style: italic; }
+.voices-field {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+.voice-card {
+  position: absolute;
+  width: min(86vw, 320px);
+  background: var(--color-surface);
+  border: 1px solid var(--j-cream-15);
+  padding: 1.1rem 1.2rem 1.3rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  will-change: transform, opacity;
+}
+.voice-card-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem; }
+.voice-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body), monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #fff;
+  flex: 0 0 auto;
+}
+.voice-name { font-family: var(--font-body), monospace; font-size: var(--text-sm); color: var(--j-cream); }
+.voice-source { font-family: var(--font-body), monospace; font-size: var(--text-xs); color: var(--j-cream-40); margin-top: 0.1rem; }
+.voice-quote {
+  font-family: var(--font-heading), serif;
+  font-style: italic;
+  font-size: var(--text-lg);
+  line-height: 1.35;
+  color: var(--j-cream);
+}
+.voices-punchline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92%, 72ch);
+  text-align: center;
+  z-index: 20;
+  opacity: 0;
+}
+.voices-punchline .gold { color: var(--j-bulls-gold); font-style: italic; }
+
+/* ─── Legacy names ────────────────────────────────────────── */
+.legacy-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--section-py) var(--section-px);
+  text-align: center;
+}
+.legacy-quote { max-width: 60ch; margin: 0 auto; }
+.legacy-quote .attr { display: block; margin-top: 1rem; color: var(--j-cream-40); font-size: var(--text-sm); }
+.audio-prompt {
+  margin-top: 1.2rem;
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--j-cream-40);
+}
+.names-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  margin-top: clamp(3rem, 8vw, 6rem);
+}
+.legacy-name {
+  position: relative;
+  font-family: var(--font-heading), serif;
+  font-weight: 400;            /* Instrument Serif — editorial, never bold */
+  font-synthesis: none;
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;     /* tight, like BAM83's name row */
+  color: var(--j-cream-40);
+  cursor: default;
+  transition: color 0.45s var(--ease-out);
+}
+.legacy-name.is-jordan { color: var(--j-cream); }
+.legacy-name:hover { color: var(--j-cream); }
+/* Spaced, hairline separators — the "Wilt . Bam . Kobe ." cadence */
+.legacy-name .name-sep {
+  color: var(--j-cream-15);
+  letter-spacing: 0.04em;
+  font-style: italic;
+}
+.name-detail {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  width: max(260px, 100%);
+  margin-top: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  font-family: var(--font-body), monospace;
+}
+.legacy-name:hover .name-detail { opacity: 1; transform: translate(-50%, 0); }
+.name-detail .nd-row { font-size: var(--text-xs); color: var(--j-cream-55); line-height: 1.7; }
+.name-detail .nd-accent { color: var(--j-bulls-red); }
+.legacy-hint {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--j-cream-40);
+}
+
+/* ─── Basketball drop sequence ────────────────────────────── */
+.bds-section {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--j-arena);
+}
+/* Spotlight pooled on the hoop */
+.bds-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 55% at 50% 46%,
+    rgba(242, 237, 228, 0.08) 0%,
+    rgba(10, 10, 10, 0) 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.bds-stage { position: absolute; inset: 0; z-index: 1; }
+.bds-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bds-hoop-back   { z-index: 1; }
+.bds-ball-anchor { z-index: 2; }
+.bds-hoop-front  { z-index: 3; }
+.bds-hoop-back svg,
+.bds-hoop-front svg {
+  width: min(72vw, 460px);
+  height: auto;
+  overflow: visible;
+}
+.bds-ball {
+  width: clamp(92px, 18vw, 140px);
+  will-change: transform;
+  transform: translateY(-77vh);
+}
+.bds-ball svg { width: 100%; height: auto; display: block; }
+.bds-net { will-change: transform; }
+.bds-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #F2EDE4;
+  opacity: 0;
+  pointer-events: none;
+}
+.bds-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(3rem, 10vh, 7rem);
+  z-index: 5;
+  text-align: center;
+  padding: 0 var(--section-px);
+  opacity: 0;
+}
+.bds-content .bds-title { max-width: 20ch; margin: 0 auto; }
+
+/* ─── CTA share prompt ────────────────────────────────────── */
+.share-prompt {
+  margin-top: 2.5rem;
+  font-family: var(--font-body), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--j-cream-55);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s var(--ease-out);
+}
+.share-prompt:hover { color: var(--j-bulls-red); }

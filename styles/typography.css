@@ -1,0 +1,94 @@
+/* ──────────────────────────────────────────────────────────
+   SERIF DISPLAY TYPE — Instrument Serif, always weight 400.
+   Never bold, never synthesized. Cinematic editorial leading
+   and optical negative tracking. The elegance comes from the
+   tight, airy proportions — not from weight.
+   ────────────────────────────────────────────────────────── */
+
+/* ─── Display ── Hero openers, single-screen statements ─── */
+.text-display {
+  font-size: var(--text-display);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 0.9;
+  letter-spacing: -0.04em;     /* -0.03em to -0.05em */
+}
+
+/* ─── Headline ── Major section headings ─────────────────── */
+.text-headline {
+  font-size: var(--text-heading);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+/* ─── Title ── Subsection headings ──────────────────────── */
+.text-title {
+  font-size: var(--text-title);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Body large ── Primary narrative copy ───────────────── */
+.text-body-lg {
+  font-size: var(--text-lg);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: var(--leading-relaxed);
+}
+
+/* ─── Body ── Narrative copy ─────────────────────────────────
+   Intentionally small and quiet (BAM83). Prose is secondary to
+   the Instrument Serif headlines and must never compete with them.
+   Width/color are applied at the call site (max 30ch, cream 65%).
+   ──────────────────────────────────────────────────────────── */
+.text-body {
+  font-size: 15px;
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.9;
+}
+
+/* ─── Caption / eyebrow ──────────────────────────────────── */
+.text-caption {
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  font-weight: 500;
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-family: var(--font-body);
+  font-weight: 500;            /* DM Mono tops out at 500 — no synthetic bold */
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ─── Stat label ── Small descriptor under a metric value ─── */
+.stat-label {
+  font-size: 11px;
+  font-family: var(--font-body);
+  font-weight: 400;            /* lighter than eyebrows — quiet metadata */
+  letter-spacing: 0.32em;      /* increased tracking */
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ─── Stat / metric ── Monospaced numbers ────────────────── */
+.text-stat {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;            /* real DM Mono weight, never synthesized */
+  letter-spacing: var(--tracking-wide);
+}

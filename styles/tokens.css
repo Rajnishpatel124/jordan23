@@ -1,0 +1,76 @@
+:root {
+  /* ─── Colors ─────────────────────────────────────── */
+  --color-primary:     #F0EBE1;
+  --color-accent:      #C8003C;
+  --color-background:  #0D0D0D;
+  --color-surface:     #161616;
+  --color-border:      rgba(240, 235, 225, 0.12);
+  --color-text-muted:  rgba(240, 235, 225, 0.55);
+  --color-text-dimmed: rgba(240, 235, 225, 0.3);
+
+  /* ─── Type Scale (fluid) ─────────────────────────── */
+  --text-xs:      clamp(0.7rem,   0.8vw,  0.85rem);
+  --text-sm:      clamp(0.85rem,  1vw,    1rem);
+  --text-base:    clamp(1rem,     1.2vw,  1.2rem);
+  --text-lg:      clamp(1.1rem,   1.5vw,  1.4rem);
+  --text-xl:      clamp(1.4rem,   2vw,    2rem);
+  --text-2xl:     clamp(1.8rem,   2.5vw,  2.5rem);
+  --text-title:   clamp(1.5rem,   3vw,    2.75rem);
+  --text-heading: clamp(2.25rem,  5vw,    5rem);
+  --text-display: clamp(3.5rem,   10vw,   9.5rem);
+
+  /* ─── Tracking ───────────────────────────────────── */
+  --tracking-tight:  -0.04em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.12em;
+  --tracking-wider:  0.28em;
+
+  /* ─── Leading ────────────────────────────────────── */
+  --leading-tight:   0.88;
+  --leading-snug:    1.08;
+  --leading-normal:  1.2;
+  --leading-relaxed: 1.65;
+
+  /* ─── Spacing (fluid) ────────────────────────────── */
+  --space-xs:   clamp(0.5rem,  1vw,   0.75rem);
+  --space-sm:   clamp(0.75rem, 1.5vw, 1rem);
+  --space-md:   clamp(1rem,    2vw,   1.5rem);
+  --space-lg:   clamp(1.5rem,  3vw,   2.5rem);
+  --space-xl:   clamp(2.5rem,  5vw,   4.5rem);
+  --space-2xl:  clamp(4rem,    8vw,   7rem);
+  --space-3xl:  clamp(6rem,    12vw,  11rem);
+
+  /* ─── Section padding ────────────────────────────── */
+  --section-px: clamp(1.5rem, 5vw, 6rem);
+  --section-py: clamp(5rem,   10vw, 9rem);
+
+  /* ─── Max widths ─────────────────────────────────── */
+  --max-prose:   68ch;
+  --max-content: 88rem;
+
+  /* ─── Z-index ────────────────────────────────────── */
+  --z-bg:      0;
+  --z-content: 10;
+  --z-overlay: 40;
+  --z-nav:     50;
+
+  /* ─── Transitions ────────────────────────────────── */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in:  cubic-bezier(0.4, 0, 1, 1);
+
+  /* ─── Jordan23 palette ───────────────────────────── */
+  --j-arena:      #0A0A0A;
+  --j-cream:      #F2EDE4;
+  --j-bulls-red:  #CE1141;
+  --j-bulls-gold: #B8922A;
+  --j-cream-65:   rgba(242, 237, 228, 0.65);
+  --j-cream-55:   rgba(242, 237, 228, 0.55);
+  --j-cream-40:   rgba(242, 237, 228, 0.40);
+  --j-cream-15:   rgba(242, 237, 228, 0.15);
+  --j-cream-08:   rgba(242, 237, 228, 0.08);
+
+  /* Jordan23 z-index layering */
+  --z-loader: 9999;
+  --z-grain:  9000;
+  --z-badge:  60;
+}

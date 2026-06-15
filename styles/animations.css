@@ -1,0 +1,59 @@
+/* ─── Fade in from below ──────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Text line / word entrance ──────────────────────────── */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(110%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Scale entrance ──────────────────────────────────────── */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Bar chart grow ──────────────────────────────────────── */
+@keyframes growWidth {
+  from { width: 0; }
+  to   { width: var(--bar-width, 100%); }
+}
+
+/* ─── Subtle pulse ────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ─── Utility: run once on scroll (no JS fallback) ────────── */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s var(--ease-out) both;
+}
+
+/* ─── Jordan23: marquee scroll ────────────────────────────── */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── Jordan23: name scale pulse ──────────────────────────── */
+@keyframes scalePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ─── Jordan23: hint fade out after timeout ──────────────── */
+@keyframes hintFade {
+  0%, 85% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+/* ─── Jordan23: blink cursor ──────────────────────────────── */
+@keyframes blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
