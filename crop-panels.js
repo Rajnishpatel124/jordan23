@@ -1,9 +1,4 @@
-/**
- * crop-panels.js
- * Manually translates the eras-track to center each panel,
- * then crops just the right-column header area (circles + season + label).
- * This bypasses the GSAP scrub and shows the raw rendered layout.
- */
+
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
@@ -14,12 +9,11 @@ const path = require('path');
   await page.setViewportSize({ width: 1440, height: 900 });
 
   await page.goto('http://localhost:3940', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(5000); // let GSAP init and loader dismiss
-
+  await page.waitForTimeout(5000); 
   const outDir = path.join(__dirname, 'panel-crops');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
-  // Get track info
+  
   const trackInfo = await page.evaluate(() => {
     const track = document.querySelector('.eras-track');
     const panels = Array.from(document.querySelectorAll('.era-panel'));
