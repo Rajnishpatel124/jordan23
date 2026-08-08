@@ -1,41 +1,11 @@
 'use client';
 
-/**
- * ChosenVideoPanel
- *
- * The cinematic video panel that floats on the RIGHT of the "Chosen"
- * (1984 Draft) composition — the third column in the
- * TEXT → JORDAN IMAGE → VIDEO PANEL reading order.
- *
- * It is purely additive: absolutely positioned inside the hero <section>
- * so it contributes zero layout flow. It never touches the text column,
- * the "23" draw, or the floating portrait.
- *
- * Layered transform stack (each transform on its own element so nothing
- * fights anything else):
- *   .cvp          — absolute right-column position (+ responsive hide)
- *   .cvp-reveal   — entrance (opacity + 26px rise), driven by Motion
- *   .cvp-float    — CSS idle float (organic vertical drift)
- *   .cvp-card     — hover scale + shadow lift (smooth transition)
- *   .cvp-glow     — soft editorial glow bleeding behind the frame
- *
- * IMPORTANT — why Motion and NOT GSAP ScrollTrigger for the reveal:
- * this panel lives INSIDE the hero <section>, which the hero pins with
- * GSAP ScrollTrigger. Putting a second ScrollTrigger-driven animation
- * inside that pinned section disrupts the pin's scrub (GSAP warns against
- * exactly this) — it froze the "23" draw and the "Chosen" reveal. So the
- * entrance uses Motion's whileInView (IntersectionObserver), which is
- * fully independent of the GSAP pin and cannot touch the hero timeline.
- *
- * The frame itself (rounded corners, grain, vignette, the YouTube loop)
- * is delegated to the shared CinematicMediaPanel, extended here with a
- * 16:9 cinematic aspect ratio.
- */
+
 
 import { motion } from 'motion/react';
 import CinematicMediaPanel from '@/components/ui/CinematicMediaPanel';
 
-// https://www.youtube.com/watch?v=a0TKEofio7w
+
 const YOUTUBE_ID = 'a0TKEofio7w';
 
 export default function ChosenVideoPanel() {
