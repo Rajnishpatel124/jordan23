@@ -10,13 +10,7 @@ import FloatingPortrait from '@/components/primitives/FloatingPortrait';
 import ChosenVideoPanel from '@/components/ui/ChosenVideoPanel';
 import { hero } from '@/data/jordan23';
 
-/**
- * Jordan23 opening scene.
- *
- * Pinned for ~200vh. As the reader scrolls, the "23" jersey number
- * draws itself onto the screen (stroke-dashoffset scrub). At ~80% it
- * flashes, then the prose panel ("Chosen." + draft narrative) slides in.
- */
+
 export default function HeroOpening() {
   const drawRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
@@ -37,14 +31,14 @@ export default function HeroOpening() {
         },
       });
 
-      // Phase 1 (0 → 0.8): draw the number
+      
       tl.to(paths, { strokeDashoffset: 0, ease: 'none', duration: 0.8 }, 0);
 
-      // Phase 2 (~0.8): flash
+      
       tl.to(flashRef.current, { opacity: 0.9, duration: 0.04 }, 0.8);
       tl.to(flashRef.current, { opacity: 0, duration: 0.12 }, 0.84);
 
-      // Phase 3 (0.8 → 1): prose panel slides in
+      
       tl.fromTo(
         panelRef.current,
         { x: -30, opacity: 0 },
