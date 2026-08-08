@@ -2,22 +2,6 @@
 
 import { useState } from 'react';
 
-/**
- * JordanPortrait → Hover Image Gallery
- *
- * The OUTER panel (.jp figure + .jp-frame) is preserved exactly as the
- * original portrait: same responsive width, same 1:1 aspect ratio, same
- * 12px radius, same position, same box-shadow. Only the MEDIA inside the
- * frame has been replaced.
- *
- * Inside the frame:
- *   • Horizontal cursor position selects which gallery image is shown
- *     (left edge → first image, right edge → last image).
- *   • Images are stacked and cross-faded by opacity so swapping never
- *     refetches — no flicker. They are lazy-loaded (loading="lazy" +
- *     decoding="async") so they do not block initial page load.
- *   • A glassmorphic chevron puck follows the cursor (custom cursor).
- */
 
 const IMAGES = [
   '/gallery/gallery-1.png',
