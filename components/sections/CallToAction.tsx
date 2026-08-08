@@ -6,7 +6,7 @@ import FadeInUp from '@/components/primitives/FadeInUp';
 interface Props {
   heading: string;
   description?: string;
-  /** Optional label for a link/button */
+  
   actionLabel?: string;
   actionHref?: string;
   className?: string;
